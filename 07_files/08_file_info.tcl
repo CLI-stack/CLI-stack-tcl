@@ -1,0 +1,20 @@
+set f "/etc/hostname"
+if {[file exists $f]} {
+    puts "File:      $f"
+    puts "Size:      [file size $f] bytes"
+    puts "Readable:  [file readable $f]"
+    puts "Type:      [file type $f]"
+    puts "Extension: [file extension $f]"
+    puts "Tail:      [file tail $f]"
+    puts "Dir:       [file dirname $f]"
+    puts "Modified:  [clock format [file mtime $f] -format {%Y-%m-%d %H:%M:%S}]"
+}
+
+set path "/home/user/docs/report.txt"
+puts "\nPath parts:"
+puts "  dirname:   [file dirname   $path]"
+puts "  tail:      [file tail      $path]"
+puts "  rootname:  [file rootname  $path]"
+puts "  extension: [file extension $path]"
+puts "  joined:    [file join /home user docs report.txt]"
+puts "  normalized:[file normalize /tmp/../etc/hostname]"

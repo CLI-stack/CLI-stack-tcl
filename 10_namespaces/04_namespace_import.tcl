@@ -1,23 +1,31 @@
+# ============================================================
+# 04_namespace_import.tcl — Importing commands into current scope
+# ============================================================
+
 namespace eval StringUtils {
+    # "namespace export" makes procs visible to callers using "namespace import"
+    # Without this, import requests are silently ignored
     namespace export *
+
     proc upper   {s} { string toupper $s }
     proc lower   {s} { string tolower $s }
     proc reverse {s} { string reverse $s }
     proc trimws  {s} { string trim    $s }
 }
 
-# Import specific
+# "namespace import" brings specific procs into the current namespace
+# After import, you can call them WITHOUT the namespace:: prefix
 namespace import StringUtils::upper StringUtils::lower
-puts [upper "hello"]
+puts [upper "hello"]   ;# works without StringUtils:: prefix
 puts [lower "WORLD"]
 
-# Import all (force to override already-imported names)
+# -force overwrites existing imports (avoids "already exists" error)
 namespace import -force StringUtils::*
 puts [reverse "hello"]
 puts [trimws  "  spaces  "]
 
-# Forget one
+# "namespace forget" removes a previously imported command
 namespace forget StringUtils::upper
 
-# Still callable by full path
+# After forgetting, must use the full qualified name again
 puts [StringUtils::upper "direct"]

@@ -1,3 +1,8 @@
+# ============================================================
+# 02_parse_timing_report.tcl — Parse a PrimeTime-style timing report
+# ============================================================
+
+# Sample timing report (normally read from a file)
 set sample_report {
 Startpoint: clk_reg (rising edge-triggered flip-flop clocked by CLK)
 Endpoint: data_reg (rising edge-triggered flip-flop clocked by CLK)
@@ -15,13 +20,16 @@ Path Type: max
   slack (MET)                      0.30
 }
 
+# Extract the slack value and its status (MET or VIOLATED)
 proc parse_slack {report} {
+    # "slack (MET) 0.30" or "slack (VIOLATED) -0.05"
     if {[regexp {slack\s+\((\w+)\)\s+([-\d.]+)} $report -> status slack]} {
         return [dict create status $status slack $slack]
     }
     return [dict create status UNKNOWN slack 0]
 }
 
+# Extract path metadata from the report header
 proc parse_endpoints {report} {
     regexp {Startpoint:\s+(\S+)} $report -> start
     regexp {Endpoint:\s+(\S+)}   $report -> end_pt

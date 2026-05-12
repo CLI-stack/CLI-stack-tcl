@@ -1,4 +1,11 @@
+# ============================================================
+# 05_custom_errors.tcl — Defining application-specific error types
+# ============================================================
+
+# Create a namespace to hold error-throwing helpers
 namespace eval MyApp {
+    # "throw" wraps "error" with a structured error code list
+    # Code format: {MYAPP CATEGORY} — can be matched with "trap"
     proc throw {category msg} {
         error $msg {} [list MYAPP $category]
     }
@@ -21,10 +28,13 @@ foreach test {"" "abc" "-5" "42"} {
     try {
         puts "OK: [validate_input $test]"
     } trap {MYAPP VALIDATION} {err} {
+        # Only catches VALIDATION errors from MyApp
         puts "Validation: $err"
     } trap {MYAPP RANGE} {err} {
+        # Only catches RANGE errors from MyApp
         puts "Range: $err"
     } on error {err} {
+        # Fallback for anything else
         puts "Unknown: $err"
     }
 }

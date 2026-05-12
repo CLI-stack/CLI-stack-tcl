@@ -1,6 +1,11 @@
-proc parse_netlist {filename} {
-    set cells [dict create]
+# ============================================================
+# 01_read_netlist.tcl — Parse a simple gate-level netlist
+# ============================================================
 
+proc parse_netlist {filename} {
+    set cells [dict create]   ;# accumulate parsed cells here
+
+    # Create a sample netlist file if it doesn't exist yet
     if {![file exists $filename]} {
         set fh [open $filename w]
         puts $fh "cell AND2 U1 (.A(net1), .B(net2), .Z(net3))"
@@ -12,8 +17,13 @@ proc parse_netlist {filename} {
     set fh [open $filename r]
     while {[gets $fh line] >= 0} {
         set line [string trim $line]
+
+        # Match lines like: cell AND2 U1 (.A(net1), ...)
+        # Capture: cell type (e.g. AND2) and instance name (e.g. U1)
         if {[regexp {^cell\s+(\w+)\s+(\w+)} $line -> type inst]} {
             dict set cells $inst type $type
+
+            # Extract all pin connections like ".A(net1)" from the line
             set pins [regexp -all -inline {\.\w+\(\w+\)} $line]
             dict set cells $inst pins $pins
         }
